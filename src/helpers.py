@@ -111,3 +111,19 @@ def comp_who_pays(relative_damage, insured):
         ])
 
     return pd.DataFrame({"F": F, "I": I, "G": G})
+
+
+def comp_outcome (damaged_area, who_pays):
+
+    ## Which Actor is responsible for how much area in each Departement
+    result = who_pays.multiply(damaged_area, axis=0)
+
+    ## Aggregate over all of France
+    absolute = result.sum()
+    relative = absolute / damaged_area.sum()
+    
+    return {
+        "who_pays_area": result,
+        "agg_absolute": absolute,
+        "agg_relative": relative
+    }
