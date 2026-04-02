@@ -3,7 +3,7 @@ import numpy as np
 from climada.entity import Exposures
 import climada.util.lines_polys_handler as u_lp
 
-def comp_impact(haz_dict, exposure_template):
+def comp_impact(haz_dict, exposure):
     """Function that Calculates the Cummulative EAI over multiple Hazard Types
 
     Args:
@@ -11,11 +11,11 @@ def comp_impact(haz_dict, exposure_template):
         exposure_template (_type_): A template of how the Exposure Set will look like
 
     Returns:
-        GDF: Exposure as GDF with a new Column the Commulative EAI
+        Array: Of Commulative EAI
     """
     
     ## Create an Exposure Map with only 1s
-    exposure_eigen_gdf = deepcopy(exposure_template.gdf)
+    exposure_eigen_gdf = deepcopy(exposure.gdf)
     exposure_eigen_gdf["value"] = 1
     exposure_eigen_poly = Exposures(exposure_eigen_gdf)
     
@@ -54,8 +54,20 @@ def comp_impact(haz_dict, exposure_template):
     ## Going from Relative Remaining Value to EAI
     commulative_eai = 1 - remaining_value
     
-    exposure = deepcopy(exposure_template.gdf)
+    return commulative_eai
 
-    exposure["commulative_eai"] = commulative_eai
+
+def comp_damage_map (eai, value, area):
+    """Combines:
+    Area per Departement
+    Commulative EAI over different Hazards
+    Relative Agriculture Area
     
-    return exposure
+    Into:
+    Expected Annual Damaged Area
+    """
+    
+    rel_damaged = eai * value
+    damaged_area = area * rel_damaged
+    
+    return damaged_area
