@@ -3,6 +3,33 @@ from climada.util.api_client import Client
 from climada.entity import ImpactFunc
 from climada.entity.impact_funcs import ImpactFuncSet
 
+## Main Functions for use in other Notebooks
+def get_haz_dict():
+    """
+    Function that uses different Hazard Functions
+    to create a dictionary of hazards with:
+    keys = haz_type
+    values = dictionary with hazard and impact function
+    """
+    ## Add new get_hazard Functions as they come
+    hazards = [
+        get_WS()
+    ]
+    
+    haz_dict = {}
+    
+    for hazard in hazards:
+        haz_dict[hazard["haz_type"]] = {
+            "hazard": hazard["hazard"],
+            "impf_set": hazard["impf_set"]
+        }
+    
+    return haz_dict
+
+#########################################
+## Functions for Specific Hazards and their Impact Functions
+## Make sure to add them into the get_haz_dict() function
+
 def get_WS ():
     
     ## Get Hazard
