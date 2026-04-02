@@ -1,5 +1,6 @@
 from copy import deepcopy
 import numpy as np
+import pandas as pd
 from climada.entity import Exposures
 import climada.util.lines_polys_handler as u_lp
 
@@ -71,3 +72,42 @@ def comp_damage_map (eai, value, area):
     damaged_area = area * rel_damaged
     
     return damaged_area
+
+
+def comp_who_pays(relative_damage, insured):
+    """Computes which actors pay which part of the damage
+
+    Args:
+        relative_damage (array): eai in departement
+        insured (array): percentage of insured people in location
+
+    Returns:
+        pd.DataFrame: 3 Cols for F, I , G
+    """
+
+    condlist = [
+        relative_damage >= 0.5,
+        (relative_damage >= 0.2) & (relative_damage < 0.5),
+        relative_damage < 0.2
+    ]
+
+    # Payments for conditions in order: F, I, G
+    F = np.select(condlist, [
+            insured * 0 + (1 - insured) * 0.65,
+            insured * 0 + (1 - insured) * 1,
+            1
+        ])
+
+    I = np.select(condlist, [
+            insured * 0.1 + (1 - insured) * 0,
+            insured * 1   + (1 - insured) * 0,
+            0
+        ])
+
+    G = np.select(condlist, [
+            insured * 0.9 + (1 - insured) * 0.35,
+            0,
+            0
+        ])
+
+    return pd.DataFrame({"F": F, "I": I, "G": G})

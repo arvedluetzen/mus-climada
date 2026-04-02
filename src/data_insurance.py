@@ -1,6 +1,8 @@
 from copy import deepcopy
 
-def get_insurance(insurance_level: float, map_template):
+## Has to get adjusted when making it more detailed
+## Either Return an Integer or length 96 for each departement 1 value
+def get_insurance(insurance_level: float):
     """_summary_
 
     Args:
@@ -11,13 +13,4 @@ def get_insurance(insurance_level: float, map_template):
         GDF: with values for all departements
     """
     
-    ## Make sure not to change the template
-    insurance_gdf = deepcopy(map_template.gdf)
-
-    ## Drop all impf Columns
-    insurance_gdf = insurance_gdf.drop(columns=insurance_gdf.filter(regex="^impf_").columns)
-
-    ## Set all Values Equal
-    insurance_gdf["value"] = insurance_level
-    
-    return insurance_gdf
+    return insurance_level
