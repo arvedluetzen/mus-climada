@@ -38,7 +38,8 @@ def get_exposure(hazard_types: list):
     ## Process Data for CLIMADA
     # Rename to obtain a key to merge
     exposure_gdf["value"] = exposure_gdf["value"].replace("s", np.nan) # remove lines with value = "S" --> secret statistique mdr
-
+    exposure_gdf["value"] = exposure_gdf["value"] / 100
+    
     # add impact function column in exposure data
     for hazard in hazard_types:
         exposure_gdf["impf_" + hazard] = 1
