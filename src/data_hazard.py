@@ -18,7 +18,9 @@ def get_haz_dict():
     """
     ## Add new get_hazard Functions as they come
     hazards = [
-        get_TC()
+        get_TC(),
+        get_TP(),
+        get_HL()
     ]
     
     haz_dict = {}
@@ -107,9 +109,6 @@ def get_TC ():
     
     n_events = t2m.shape[0]
     n_centroids = t2m.shape[1] * t2m.shape[2]
-
-    # Reshape to (event, centroid)
-    intensity = t2m.reshape(n_events, n_centroids)
     
     ## Creating Hazard
     hazard = Hazard(haz_type="TC")
@@ -149,14 +148,30 @@ def get_TC ():
     # damage = np.clip(damage, 0, 1)
     
     # Logistic
+    # temps = np.linspace(-10, 45, 200)
+    # T0 = 30     # inflection point
+    # k = 0.3     # steepness
+    # scale = 0.01  # daily impact scaling
+
+    # damage = scale * (1 / (1 + np.exp(-k * (temps - T0))))
+    # damage = np.clip(damage, 0, 1)
+    
+    # Threshold:
+    # < 32 Degrees = 0 % Damage
+    # 32 Degrees = 1 % Damage
+    # Every Degree above that + 0.05 Degrees
+
     temps = np.linspace(-10, 45, 200)
 
-    T0 = 30     # inflection point
-    k = 0.3     # steepness
-    scale = 0.01  # daily impact scaling
+    threshold = 28.0        # 32 for Daily Max Temperature
+    base_damage = 0.01      # 1% at threshold
+    slope = 0.005           # +0.5% per °C above threshold
 
-    damage = scale * (1 / (1 + np.exp(-k * (temps - T0))))
-    damage = np.clip(damage, 0, 1)
+    damage = np.where(
+        temps <= threshold,
+        0.0,
+        base_damage + slope * (temps - threshold)
+    )
     
     impf_TC = ImpactFunc(
         id=1,
@@ -174,4 +189,124 @@ def get_TC ():
         "haz_type": hazard.haz_type, # Replace with Climada readable abbreviation
         "hazard": hazard, # Climada Hazard Object
         "impf_set": impf_TC_set # Impf already as set (to make later computations easier)
+    }
+    
+    
+def get_TP ():
+    
+    SRC_DIR = Path.cwd()
+    PROJECT_ROOT = SRC_DIR.parent
+    DATA_DIR = PROJECT_ROOT / "data" / "total_precipitation"
+    
+    ## Load Hazard from NetCDF Files
+
+    ds = xr.open_mfdataset(
+        str(DATA_DIR / "*.nc"),
+        combine="by_coords"
+    )
+
+    ## Converting Xarray to CLIMADA Hazard
+    
+    #Creating Centriods for Data
+    lats = ds.latitude.values
+    lons = ds.longitude.values
+    # Build 2D grid
+    lon2d, lat2d = np.meshgrid(lons, lats)
+    centroids = Centroids(
+        lat=lat2d.ravel(),
+        lon=lon2d.ravel()
+    )
+    
+    # (valid_time, latitude, longitude)
+    tp = ds["tp"].values
+    tp = tp * 1000 # Change to mm
+    
+    n_events = tp.shape[0]
+    n_centroids = tp.shape[1] * tp.shape[2]
+    
+    ## Creating Hazard
+    hazard = Hazard(haz_type="TP")
+
+    # --- REQUIRED: centroids ---
+    hazard.centroids = centroids   # <-- you MUST set this
+
+    # --- Dense first ---
+    intensity_dense = tp.reshape(n_events, n_centroids)
+    fraction_dense  = np.ones_like(intensity_dense)
+
+    # --- Convert once to sparse ---
+    hazard.intensity = sparse.csr_matrix(intensity_dense)
+    hazard.fraction  = sparse.csr_matrix(fraction_dense)
+
+    # --- Events ---
+    hazard.event_id = np.arange(1, n_events + 1)
+    hazard.event_name = np.array([f"event_{i}" for i in hazard.event_id])
+    hazard.date = ds.valid_time.dt.date.values.astype("datetime64[D]")
+
+    # April–Sept only: but frequency must sum to 1
+    hazard.frequency = np.ones(n_events) / 365
+
+    # --- Metadata ---
+    hazard.units = "mm"
+    hazard.tag = {
+        "source": "ECMWF ERA",
+        "description": "Daily total precipitation, April–September 1990-2000"
+    }
+    
+    ## Define Respective Impact Function
+    precipitation = np.array([0, 20, 40, 60, 80, 120])
+    damage = np.array([0, 0, 0.05, 0.2, 0.5, 0.9])
+    
+    impf_TP = ImpactFunc(
+        id=1,
+        name = "Total Precipitation ChatGPT Function",
+        intensity_unit="mm",
+        haz_type=hazard.haz_type,
+        intensity=precipitation,
+        mdd=damage,
+        paa = np.ones_like(precipitation)
+    )
+    
+    impf_TP_set = ImpactFuncSet([impf_TP])
+    
+    return {
+        "haz_type": hazard.haz_type, # Replace with Climada readable abbreviation
+        "hazard": hazard, # Climada Hazard Object
+        "impf_set": impf_TP_set # Impf already as set (to make later computations easier)
+    }
+    
+def get_HL ():
+    
+    ## Get Hazard
+    client = Client()
+    ISO = "FRA"
+    hazard = client.get_hazard(
+        "hail",
+        properties={
+            "country_iso3alpha": ISO,
+            'climate_scenario': 'REF'}
+        )
+    
+    ## Define Respective Impact Function
+    diameter = np.array([0, 6, 10, 20, 30, 50])
+
+    # Mean Damage Degree (0–1)
+    damage = np.array([0.0, 0.05, 0.15, 0.35, 0.60, 0.90])
+    
+    impf_HL = ImpactFunc(
+        id=1,
+        name = "Hail Impact Function",
+        intensity_unit="mm",
+        haz_type=hazard.haz_type,
+        intensity=diameter,
+        mdd=damage,
+        paa = np.ones_like(diameter)
+    )
+    
+    impf_HL_set = ImpactFuncSet([impf_HL])
+    
+    return {
+        "haz_type": hazard.haz_type, # Replace with Climada readable abbreviation
+        "hazard": hazard, # Climada Hazard Object
+        "impf_set": impf_HL_set # Impf already as set (to make later computations easier)
     }

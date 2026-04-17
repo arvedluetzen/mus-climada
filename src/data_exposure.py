@@ -33,7 +33,7 @@ def get_exposure(hazard_types: list):
     crop_df = crop_df.rename(columns={"number_department": "DDEP_C_COD"})
 
     # Merge with Geometry + Data
-    exposure_gdf = boundaries_gdf.merge(crop_df.iloc[:, [0, 2, 3]], on="DDEP_C_COD")
+    exposure_gdf = boundaries_gdf.merge(crop_df.iloc[:, [0, 2, 3, 4]], on="DDEP_C_COD")
 
     ## Process Data for CLIMADA
     # Rename to obtain a key to merge
