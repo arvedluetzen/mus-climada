@@ -21,7 +21,7 @@ def get_haz_dict():
         get_TC(),
         get_TP(),
         get_HL(),
-        get_FL()
+#         get_FL()
     ]
     
     haz_dict = {}
@@ -131,7 +131,7 @@ def get_TC ():
     hazard.date = ds.valid_time.dt.date.values.astype("datetime64[D]")
 
     # April–Sept only: but frequency must sum to 1
-    hazard.frequency = np.ones(n_events) / 365
+    hazard.frequency = np.ones(n_events) / 10
 
     # --- Metadata ---
     hazard.units = "degC"
@@ -245,7 +245,7 @@ def get_TP ():
     hazard.date = ds.valid_time.dt.date.values.astype("datetime64[D]")
 
     # April–Sept only: but frequency must sum to 1
-    hazard.frequency = np.ones(n_events) / 365
+    hazard.frequency = np.ones(n_events) / 7
 
     # --- Metadata ---
     hazard.units = "mm"

@@ -127,3 +127,50 @@ def comp_outcome (damaged_area, who_pays):
         "agg_absolute": absolute,
         "agg_relative": relative
     }
+    
+
+def comp_insurance (
+    method: str,
+    scaling_factor: float,
+    insurance_current,
+    eai = None
+    ):
+    
+    """Computes Scenarios for Insurance Coverage Development
+    
+    scaling_factor: how much does it increase
+
+    method:
+    - "constant": increases by the same fraction
+    - "coverage": increases by (1-current coverage) * scaling_factor
+    - "eai": increases by 1/eai
+
+    Returns:
+        Vector with Insurance Coverage per Departement
+    """
+    
+    assert (method in ["constant", "coverage", "eai"]), "Wrong Method Specified"
+    
+    if method == "eai":
+        assert (eai is not None), "If method = eai, please Provide EAI Vector"
+        
+    assert (scaling_factor <=1 and scaling_factor>=0), "Scaling Factor must be between 0 and 1"
+        
+    if method == "constant":
+        insurance_new = insurance_current + scaling_factor
+        
+    elif method == "coverage":
+        insurance_new = insurance_current + (1 - insurance_current) * scaling_factor
+        
+    elif method == "eai":
+        norm_factor = 1 / eai.max()
+        eai = eai * norm_factor
+        
+        insurance_new = insurance_current + (eai * scaling_factor)
+        
+    else:  
+        raise Exception("Wrong Method Input")
+    
+    insurance_new = insurance_new.clip(lower=0, upper=1)
+    return insurance_new
+        
