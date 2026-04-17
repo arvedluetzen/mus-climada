@@ -1,4 +1,9 @@
 import numpy as np
+import xarray as xr
+from pathlib import Path
+from scipy import sparse
+from climada.hazard import Hazard
+from climada.hazard.centroids import Centroids
 from climada.util.api_client import Client
 from climada.entity import ImpactFunc
 from climada.entity.impact_funcs import ImpactFuncSet
@@ -13,7 +18,7 @@ def get_haz_dict():
     """
     ## Add new get_hazard Functions as they come
     hazards = [
-        get_WS()
+        get_TC()
     ]
     
     haz_dict = {}
@@ -51,10 +56,122 @@ def get_WS ():
         paa = np.ones(5)
     )
     
-    impf_WS_set = ImpactFuncSet([impf_WS])
+    impf_WS_test = ImpactFunc(
+        id=1,
+        name = "Storm Impact Function",
+        intensity_unit="m/s",
+        haz_type=hazard.haz_type,
+        intensity=np.array([0, 12.1, 14.8, 16.8, 22, 100]),
+        mdd=np.array([0.0, 0.1, 0.2, 0.4, 0.5, 1.0]),
+        paa = np.ones(6)
+    )
+    
+    impf_WS_set = ImpactFuncSet([impf_WS_test])
     
     return {
         "haz_type": hazard.haz_type, # Replace with Climada readable abbreviation
         "hazard": hazard, # Climada Hazard Object
         "impf_set": impf_WS_set # Impf already as set (to make later computations easier)
+    }
+    
+    
+def get_TC ():
+    
+    SRC_DIR = Path.cwd()
+    PROJECT_ROOT = SRC_DIR.parent
+    DATA_DIR = PROJECT_ROOT / "data" / "2m_temperature"
+    
+    ## Load Hazard from NetCDF Files
+
+    ds = xr.open_mfdataset(
+        str(DATA_DIR / "*.nc"),
+        combine="by_coords"
+    )
+
+    ## Converting Xarray to CLIMADA Hazard
+    
+    #Creating Centriods for Data
+    lats = ds.latitude.values
+    lons = ds.longitude.values
+    # Build 2D grid
+    lon2d, lat2d = np.meshgrid(lons, lats)
+    centroids = Centroids(
+        lat=lat2d.ravel(),
+        lon=lon2d.ravel()
+    )
+    
+    # (valid_time, latitude, longitude)
+    t2m = ds["t2m"].values
+    # Convert Kelvin → Celsius (important for impact functions)
+    t2m = t2m - 273.15
+    
+    n_events = t2m.shape[0]
+    n_centroids = t2m.shape[1] * t2m.shape[2]
+
+    # Reshape to (event, centroid)
+    intensity = t2m.reshape(n_events, n_centroids)
+    
+    ## Creating Hazard
+    hazard = Hazard(haz_type="TC")
+
+    # --- REQUIRED: centroids ---
+    hazard.centroids = centroids   # <-- you MUST set this
+
+    # --- Dense first ---
+    intensity_dense = t2m.reshape(n_events, n_centroids)
+    fraction_dense  = np.ones_like(intensity_dense)
+
+    # --- Convert once to sparse ---
+    hazard.intensity = sparse.csr_matrix(intensity_dense)
+    hazard.fraction  = sparse.csr_matrix(fraction_dense)
+
+    # --- Events ---
+    hazard.event_id = np.arange(1, n_events + 1)
+    hazard.event_name = np.array([f"event_{i}" for i in hazard.event_id])
+    hazard.date = ds.valid_time.dt.date.values.astype("datetime64[D]")
+
+    # April–Sept only: but frequency must sum to 1
+    hazard.frequency = np.ones(n_events) / 365
+
+    # --- Metadata ---
+    hazard.units = "degC"
+    hazard.tag = {
+        "source": "ECMWF ERA",
+        "description": "Daily mean 2m temperature, April–September 1990-2000"
+    }
+    
+    ## Define Respective Impact Function
+    
+    # Parabel
+    #temps = np.linspace(-10, 40, 100)
+    # a = 0.05 / (18**2)
+    # damage = a * (temps - 12)**2
+    # damage = np.clip(damage, 0, 1)
+    
+    # Logistic
+    temps = np.linspace(-10, 45, 200)
+
+    T0 = 30     # inflection point
+    k = 0.3     # steepness
+    scale = 0.01  # daily impact scaling
+
+    damage = scale * (1 / (1 + np.exp(-k * (temps - T0))))
+    damage = np.clip(damage, 0, 1)
+    
+    impf_TC = ImpactFunc(
+        id=1,
+        name = "Parabolic temp damage Impact Function",
+        intensity_unit="m/s",
+        haz_type=hazard.haz_type,
+        intensity=temps,
+        mdd=damage,
+        paa = np.ones_like(temps)
+    )
+    
+    impf_TC_set = ImpactFuncSet([impf_TC])
+    
+    return {
+        "haz_type": hazard.haz_type, # Replace with Climada readable abbreviation
+        "hazard": hazard, # Climada Hazard Object
+        "impf_set": impf_TC_set # Impf already as set (to make later computations easier)
     }
