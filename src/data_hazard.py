@@ -20,7 +20,8 @@ def get_haz_dict():
     hazards = [
         get_TC(),
         get_TP(),
-        get_HL()
+        get_HL(),
+        get_FL()
     ]
     
     haz_dict = {}
@@ -309,4 +310,39 @@ def get_HL ():
         "haz_type": hazard.haz_type, # Replace with Climada readable abbreviation
         "hazard": hazard, # Climada Hazard Object
         "impf_set": impf_HL_set # Impf already as set (to make later computations easier)
+    }
+    
+def get_FL ():
+    
+    ## Get Hazard
+    client = Client()
+    ISO = "FRA"
+    hazard = client.get_hazard("flood", properties={
+        'res_meter': ['250'],
+        'spatial_coverage': ['country'],
+        'year_range': ['2002_2019'],
+        'country_iso3alpha': ISO,
+        'country_name': ['France']
+        })
+    
+    ## Define Respective Impact Function
+    intensity = np.array([0., 0.05, 0.5, 1., 1.5, 2., 3., 4., 5., 6., 12.])
+    damage = np.array([0., 0., 0.3, 0.55,  0.65, 0.75,  0.85, 0.95, 1., 1., 1.])
+
+    impf_FL = ImpactFunc(
+        id=1,
+        name = "Hail Impact Function",
+        intensity_unit="mm",
+        haz_type=hazard.haz_type,
+        intensity=intensity,
+        mdd=damage,
+        paa = np.ones_like(intensity)
+    )
+    
+    impf_FL_set = ImpactFuncSet([impf_FL])
+    
+    return {
+        "haz_type": hazard.haz_type, # Replace with Climada readable abbreviation
+        "hazard": hazard, # Climada Hazard Object
+        "impf_set": impf_FL_set # Impf already as set (to make later computations easier)
     }
