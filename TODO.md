@@ -1,3 +1,33 @@
+# ToDos Praktikum bis Hand in Policy Brief (22. Mai)
+
+> 5 volle Tage Arbeit
+
+Abgaben:
+- Policy Brief
+- Technischer Anhang
+- CLIMADA Code
+
+## Ablauf
+
+**24. April**
+- Policy Brief + Technischer Anhang Outline / Draft (Sarah-Rose + Marie)
+- Quantitative: Fix Who Pays What + Clean Up (Arved)
+
+**30. April**
+- Präsentation (alle)
+
+**7. Mai (max 1-2h Arbeitszeit)**
+
+**8. Mai**
+
+**21. Mai**
+
+**22. Mai**
+
+# Policy Brief
+
+
+
 
 # ToDos for the Quantitative Part
 

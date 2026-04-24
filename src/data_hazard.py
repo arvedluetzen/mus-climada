@@ -21,7 +21,7 @@ def get_haz_dict():
         get_TC(),
         get_TP(),
         get_HL(),
-#         get_FL()
+        get_FL()
     ]
     
     haz_dict = {}
