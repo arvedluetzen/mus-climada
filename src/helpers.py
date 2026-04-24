@@ -17,6 +17,8 @@ def comp_impact(haz_dict, exposure_pnt_gdf):
     haz_eai = {}
     
     for haz_type, hazard in haz_dict.items():
+        
+        print(f"Computing {haz_type}")
 
         impact_pnt = ImpactCalc(
                 exposure_pnt_eigen,

@@ -35,6 +35,7 @@ Abgaben:
 - Von Hand Cost Benefit analysis: take into account that costs are at one point and that benefits are in the long run (aka discounting)
 - climate change scenarios (use the same for all hazards, interpolation to get value per year)
 - How does France Wide Who Pays change with scaling factor
+- Download max temp every day
 
 
 ### Change when "who pays what" is computed to allow for local minima (per pixel and not per polygone)
