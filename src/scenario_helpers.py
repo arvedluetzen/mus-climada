@@ -71,7 +71,8 @@ def comp_scenarios(
                 "who_pays_what": deepcopy(who_pays_what),
                 "insured_area": deepcopy(insured_area),
         }
-        
-    final_results["relative_max"] = relative_max
+    
+    for label, scenario in final_results.items():
+        scenario["relative_max"] = relative_max   
         
     return final_results

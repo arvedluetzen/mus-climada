@@ -31,11 +31,8 @@ Abgaben:
 
 # ToDos for the Quantitative Part
 
-- Event Frequency of Percipitation and Heat (/n years)
 - Von Hand Cost Benefit analysis: take into account that costs are at one point and that benefits are in the long run (aka discounting)
 - climate change scenarios (use the same for all hazards, interpolation to get value per year)
-- How does France Wide Who Pays change with scaling factor
-- Download max temp every day
 - myb delete comp_outcome
 
 

@@ -21,7 +21,7 @@ def get_haz_dict():
         get_TC(),
         get_TP(),
         get_HL(),
-#        get_FL()
+        get_FL()
     ]
     
     haz_dict = {}
@@ -176,7 +176,7 @@ def get_TC ():
     
     impf_TC = ImpactFunc(
         id=1,
-        name = "Parabolic temp damage Impact Function",
+        name = "Max Temp Impact Function (Paper)",
         intensity_unit="m/s",
         haz_type=hazard.haz_type,
         intensity=temps,
@@ -260,7 +260,7 @@ def get_TP ():
     
     impf_TP = ImpactFunc(
         id=1,
-        name = "Total Precipitation ChatGPT Function",
+        name = "Total Precipitation Impact Function (ChatGPT)",
         intensity_unit="mm",
         haz_type=hazard.haz_type,
         intensity=precipitation,
@@ -296,7 +296,7 @@ def get_HL ():
     
     impf_HL = ImpactFunc(
         id=1,
-        name = "Hail Impact Function",
+        name = "Hail Impact Function (Papers)",
         intensity_unit="mm",
         haz_type=hazard.haz_type,
         intensity=diameter,
@@ -331,7 +331,7 @@ def get_FL ():
 
     impf_FL = ImpactFunc(
         id=1,
-        name = "Hail Impact Function",
+        name = "Flood Impact Function (Climada API)",
         intensity_unit="mm",
         haz_type=hazard.haz_type,
         intensity=intensity,
