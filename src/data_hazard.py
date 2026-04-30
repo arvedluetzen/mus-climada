@@ -85,7 +85,7 @@ def get_TC ():
     DATA_DIR = PROJECT_ROOT / "data" / "2m_temperature"
     
     ## Load Hazard from NetCDF Files
-
+    n_files = sum(1 for _ in DATA_DIR.glob("*.nc"))
     ds = xr.open_mfdataset(
         str(DATA_DIR / "*.nc"),
         combine="by_coords"
@@ -131,7 +131,7 @@ def get_TC ():
     hazard.date = ds.valid_time.dt.date.values.astype("datetime64[D]")
 
     # April–Sept only: but frequency must sum to 1
-    hazard.frequency = np.ones(n_events) / 10
+    hazard.frequency = np.ones(n_events) / n_files
 
     # --- Metadata ---
     hazard.units = "degC"
@@ -164,7 +164,7 @@ def get_TC ():
 
     temps = np.linspace(-10, 45, 200)
 
-    threshold = 28.0        # 32 for Daily Max Temperature
+    threshold = 32.0        # 32 for Daily Max Temperature
     base_damage = 0.01      # 1% at threshold
     slope = 0.005           # +0.5% per °C above threshold
 
@@ -200,7 +200,7 @@ def get_TP ():
     DATA_DIR = PROJECT_ROOT / "data" / "total_precipitation"
     
     ## Load Hazard from NetCDF Files
-
+    n_files = sum(1 for _ in DATA_DIR.glob("*.nc"))
     ds = xr.open_mfdataset(
         str(DATA_DIR / "*.nc"),
         combine="by_coords"
@@ -245,7 +245,7 @@ def get_TP ():
     hazard.date = ds.valid_time.dt.date.values.astype("datetime64[D]")
 
     # April–Sept only: but frequency must sum to 1
-    hazard.frequency = np.ones(n_events) / 7
+    hazard.frequency = np.ones(n_events) / n_files
 
     # --- Metadata ---
     hazard.units = "mm"
