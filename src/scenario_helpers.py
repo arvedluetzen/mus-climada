@@ -14,6 +14,7 @@ def comp_scenarios(
 ) -> dict:
     
     final_results = {}
+    relative_max = 0
     
     for scaling_factor in insurance_scaling_factors:
         
@@ -51,6 +52,8 @@ def comp_scenarios(
         )
 
         result.columns = ['F_area', 'I_area', 'G_area']
+        
+        relative_max = max(relative_max, scenario_poly[['F_relative', 'I_relative', 'G_relative']].max().max())
 
         scenario_poly = scenario_poly.join(result)
         
@@ -66,7 +69,9 @@ def comp_scenarios(
                 "scenario_pnt": deepcopy(scenario_pnt),
                 "scenario_poly": deepcopy(scenario_poly),
                 "who_pays_what": deepcopy(who_pays_what),
-                "insured_area": deepcopy(insured_area)
+                "insured_area": deepcopy(insured_area),
         }
+        
+    final_results["relative_max"] = relative_max
         
     return final_results
