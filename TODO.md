@@ -25,6 +25,9 @@ Abgaben:
 **22. Mai**
 
 # Policy Brief
+- Wie haben es andere gemacht: Multi Hazard Who Does What?
+- An wen addressieren wir den Brief -> Cost Benefit ändert sich
+- Difference Plots nicht Absolut
 
 
 
