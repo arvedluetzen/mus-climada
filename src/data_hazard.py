@@ -82,7 +82,7 @@ def get_TC ():
     
     SRC_DIR = Path.cwd()
     PROJECT_ROOT = SRC_DIR.parent
-    DATA_DIR = PROJECT_ROOT / "data" / "2m_temperature"
+    DATA_DIR = PROJECT_ROOT / "data" / "2m_temperature_max"
     
     ## Load Hazard from NetCDF Files
     n_files = sum(1 for _ in DATA_DIR.glob("*.nc"))
@@ -177,7 +177,7 @@ def get_TC ():
     impf_TC = ImpactFunc(
         id=1,
         name = "Max Temp Impact Function (Paper)",
-        intensity_unit="m/s",
+        intensity_unit="degC",
         haz_type=hazard.haz_type,
         intensity=temps,
         mdd=damage,
@@ -255,8 +255,8 @@ def get_TP ():
     }
     
     ## Define Respective Impact Function
-    precipitation = np.array([0, 20, 40, 60, 80, 120])
-    damage = np.array([0, 0, 0.05, 0.2, 0.5, 0.9])
+    precipitation = np.array([0, 10, 20, 35, 55, 90])
+    damage        = np.array([0, 0, 0.02, 0.2, 0.6, 1.0])
     
     impf_TP = ImpactFunc(
         id=1,

@@ -25,7 +25,9 @@ def comp_impact(haz_dict, exposure_pnt_gdf):
                 impfset=hazard["impf_set"],
                 hazard=hazard["hazard"]
             ).impact(save_mat=True)
-
+        
+        print(f"{np.mean(impact_pnt.eai_exp) = }")
+        
         eai = np.clip(impact_pnt.eai_exp, a_min=0, a_max=1)
         haz_eai[haz_type] = eai
     
