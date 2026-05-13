@@ -197,7 +197,7 @@ def get_TP ():
     
     SRC_DIR = Path.cwd()
     PROJECT_ROOT = SRC_DIR.parent
-    DATA_DIR = PROJECT_ROOT / "data" / "total_precipitation"
+    DATA_DIR = PROJECT_ROOT / "data" / "total_precipitation" # TODO: Remove 6hourly
     
     ## Load Hazard from NetCDF Files
     n_files = sum(1 for _ in DATA_DIR.glob("*.nc"))
