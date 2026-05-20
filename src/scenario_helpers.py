@@ -28,7 +28,7 @@ def comp_scenarios(
             scaling_factor=scaling_factor,
             insurance_current=scenario_pnt["insurance"],
             eai=scenario_pnt["eai"]
-        )
+        ) 
         
         result = comp_who_pays(
             relative_damage=scenario_pnt["eai"],
