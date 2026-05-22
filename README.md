@@ -6,7 +6,17 @@ Quantitative Analysis for Group Work in FS2026 "Praktikum Mensch- und Umweltsyst
 
 ---
 
-# Beschreibung der Quantitativen Analyse
+# Struktur des Repositorys
+
+
+---
+
+# Erklärung der wichtigsten Funktionen
+
+
+--------------------------------------
+
+# Überblick der Quantitativen Analyse
 
 Eine "klassische" CLIMADA Analyse ergab mit unserem Thema von Versicherungen wenig Sinn. Die Versicherungsabdeckung zu verändern, hat weder einen Einfluss auf die Vulnerability noch auf Hazard oder Exposure (Auf jeden Fall nicht direkt). Die Frage, die wir zu beantworten versuchen ist wie sich die Kostenlast zwischen den Akteuren Bauern, Versicherungen und Staat verteilt, wenn sich die Versicherungsabdeckung ändert. Konzeptionell sollten davon sowohl Bauern als auch Versicherungen profitieren. Dies in einem Modell auszudrücken erfordert folgende Informationen:
 
