@@ -1,5 +1,5 @@
 """helpers.py
-Functions that are 
+General helper functions 
 """
 
 import geopandas as gpd

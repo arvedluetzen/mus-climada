@@ -1,3 +1,9 @@
+"""scenario_helpers.py
+Functions for scenario computations (for both EAI and yearset approach)
+- comp_insurance: Computes insurance scenarios
+- Plotting functions for scenarios (absolute and difference)
+"""
+
 import geopandas as gpd
 import numpy as np
 from copy import deepcopy

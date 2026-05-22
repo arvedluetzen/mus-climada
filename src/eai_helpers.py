@@ -1,3 +1,7 @@
+"""eai_helpers.py
+Includes all helper functions that are specific to the EAI approach.
+"""
+
 from copy import deepcopy
 import numpy as np
 import pandas as pd
@@ -5,6 +9,15 @@ from climada.engine import ImpactCalc
 from climada.entity import Exposures
 
 def comp_impact(haz_dict, exposure_pnt_gdf):
+    """Aggregates Hazards into cumulative relative EAIs
+
+    Args:
+        haz_dict (dictionary): dictionary with hazards and impact functions
+        exposure_pnt_gdf (gdf with exposures): template for Eigenexposure
+
+    Returns:
+        list: cumulative eai for each exposure point
+    """
     
     ## Poly -> Eigen Raster Exposure
     exposure_pnt_eigen_gdf = deepcopy(exposure_pnt_gdf)
@@ -34,9 +47,9 @@ def comp_impact(haz_dict, exposure_pnt_gdf):
     for haz_type, eai in haz_eai.items():
         remaining_value *= (1 - eai)
     
-    commulative_eai = 1 - remaining_value
+    cumulative_eai = 1 - remaining_value
     
-    return commulative_eai
+    return cumulative_eai
 
 
 def comp_damage_map (eai, value, area):

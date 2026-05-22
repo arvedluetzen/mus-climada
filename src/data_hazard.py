@@ -18,10 +18,10 @@ def get_haz_dict():
     """
     ## Add new get_hazard Functions as they come
     hazards = [
-        get_TC(),
-        get_TP(),
-        get_HL(),
-        get_FL()
+        get_TC(), # Daily Max Temperature
+        get_TP(), # Daily Cumulative Percipitation
+        get_HL(), # Hail
+        get_FL()  # Flood
     ]
     
     haz_dict = {}
@@ -38,6 +38,7 @@ def get_haz_dict():
 ## Functions for Specific Hazards and their Impact Functions
 ## Make sure to add them into the get_haz_dict() function
 
+## WS was just a first test hazard but is not used in final analysis
 def get_WS ():
     
     ## Get Hazard
