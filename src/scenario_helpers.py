@@ -11,10 +11,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import geopandas as gpd
 
-from src.scenario_helpers import comp_insurance
 from src.eai_helpers import comp_who_pays
 from src.helpers import agg_to_departement
-
 
 def comp_insurance (
     method: str,
@@ -75,6 +73,8 @@ def plot_scenario(scenario, title_addition=None):
     results = scenario["scenario_poly"]
     rel_max = scenario["relative_max"]
 
+    avg_insurance = scenario["insured_area"] / results["area"].sum()
+
     cols = ["F_relative", "I_relative", "G_relative"]
     titles = ["Farmer", "Insurance", "Government"]
 
@@ -89,18 +89,22 @@ def plot_scenario(scenario, title_addition=None):
     # -------------------------------
     # 1) INSURANCE MAP (left panel)
     # -------------------------------
+    results["insurance_percent"] = results["insurance"] * 100
+    
     results.plot(
-        column="insurance",
+        column="insurance_percent",
         ax=axes[0],
         cmap="viridis",
         legend=True,
         edgecolor="black",
         linewidth=0.5,
         vmin=0,
-        vmax=1
+        vmax=100
     )
-    axes[0].set_title("Insurance Coverage [%]")
+    axes[0].set_title(f"Insurance Coverage [%] (Average: {avg_insurance:.1%})", fontweight="bold")
     axes[0].set_axis_off()
+    
+
 
     # -------------------------------
     # 2) SHARED NORMALIZATION (right 3 panels)
@@ -122,7 +126,7 @@ def plot_scenario(scenario, title_addition=None):
             edgecolor="black",
             linewidth=0.4
         )
-        ax.set_title(title)
+        ax.set_title(title, fontweight="bold")
         ax.set_axis_off()
 
     # -------------------------------
@@ -138,7 +142,7 @@ def plot_scenario(scenario, title_addition=None):
         fraction=0.025,
         pad=0.02
     )
-    cbar.set_label("Relative Area [%EAI × %Farm Land]")
+    cbar.set_label("Relative Area [%EAI × %Farm Land]", fontweight="bold")
     
     title = "Insurance Coverage and Cost Distribution by Department"
     if title_addition:
@@ -154,6 +158,8 @@ def plot_difference(baseline_scenario, compare_scenario,
 
     base = baseline_scenario["scenario_poly"].copy()
     comp = compare_scenario["scenario_poly"].copy()
+    
+    avg_insurance = compare_scenario["insured_area"] / comp["area"].sum()
 
     diff = base.copy()
 
@@ -168,7 +174,7 @@ def plot_difference(baseline_scenario, compare_scenario,
     # Insurance scale (own scale)
     norm_ins = mpl.colors.Normalize(
         vmin=0,
-        vmax=1
+        vmax=100
     )
     cmap_ins = "viridis"
 
@@ -198,7 +204,7 @@ def plot_difference(baseline_scenario, compare_scenario,
     )
 
     titles = [
-        "Insurance Coverage [%]",
+        f"Insurance Coverage [%] (Average: {avg_insurance:.1%})",
         "Farmer",
         "Insurance",
         "Government"
@@ -207,10 +213,11 @@ def plot_difference(baseline_scenario, compare_scenario,
     # -----------------------------------
     # PLOT PANELS
     # -----------------------------------
-
+    comp["insurance_percent"] = comp["insurance"] * 100
+    
     # FIRST PANEL (different scale + cmap)
     comp.plot(
-        column="insurance",
+        column="insurance_percent",
         ax=axes[0],
         cmap=cmap_ins,
         norm=norm_ins,
@@ -218,7 +225,7 @@ def plot_difference(baseline_scenario, compare_scenario,
         linewidth=0.4
     )
 
-    axes[0].set_title(titles[0])
+    axes[0].set_title(titles[0], fontsize=12, fontweight="bold")
     axes[0].set_axis_off()
 
     # REMAINING THREE (shared scale)
@@ -233,7 +240,7 @@ def plot_difference(baseline_scenario, compare_scenario,
             linewidth=0.4
         )
 
-        ax.set_title(title)
+        ax.set_title(title, fontsize=12, fontweight="bold")
         ax.set_axis_off()
 
     # -----------------------------------
@@ -264,7 +271,7 @@ def plot_difference(baseline_scenario, compare_scenario,
         fraction=0.025,
         pad=0.02
     )
-    cbar2.set_label("Difference in Relative Area [%EAI × %Farm Land]")
+    cbar2.set_label("Difference in Relative Area [%EAI × %Farm Land]", fontweight="bold")
 
     # -----------------------------------
     # TITLE

@@ -114,13 +114,13 @@ $$
 
 # Überblick über Repository
 
-Unser Workflow sah etwa so aus:
+Unser Workflow sah etwa so aus (finaler Ablauf für Policy Brief und technischer Anhang in "0424_yearset-scenarios.ipynb"):
 
-1. Funktionen in Jupyter Notebooks entwickeln (siehe in Ordner "notebooks") und testen.
+1. Funktionen in Jupyter Notebooks entwickeln (siehe in Ordner "notebooks" - ohne Datum) und testen.
 2. Fertige Funktion in src Directory verschieben (siehe Ordner "src").
-3. In einem Notebook den ganzen Ablauf durchrechnen (siehe in Ordner "notebooks", zB 0424_yearset-scenarios.ipynb)
+3. In einem Notebook den ganzen Ablauf durchrechnen (siehe in Ordner "notebooks" - mit Daten, zB 0424_yearset-scenarios.ipynb)
 
-Die wichtigsten Funktionen werde ich kurz beschreiben siehe "0424_yearset-scenarios.ipynb".
+Die wichtigsten Funktionen (für den yearset Ansatz) werde ich kurz beschreiben:
 
 ## get_haz_dict() in data_hazard.py
 
