@@ -2,6 +2,8 @@
 
 Quantitative Analysis for Group Work in FS2026 "Praktikum Mensch- und Umweltsysteme" at ETH Zürich
 
+> Die finalen Dokumente und Jupyter Notebooks sind im Ordner "0_FINAL" abgelegt. Der Rest des Repositories dokumentiert den Prozess.
+
 ## Background
 
 Unser Projekt im Rahmen des Praktikums fokussiert sich auf Ernteversicherungen in Frankreich. Obwohl diese als wichtige Massnahme angesehen werden, Landwirtschaft and den Klimawandel anzupassen, ist die Versicherungsabdeckung in Frankreich sehr niedrig. Wir wollten herausfinden wieso dies so ist, was gemacht werden kann, um das zu ändern, und welchen Einfluss das auf die Kostenverteilung zwischen den Akteuren hat. Für letzteres haben wir diese quantitative Analyse durchgeführt.
